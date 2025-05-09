@@ -1,7 +1,7 @@
 import asyncio
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
-from config import BOT_TOKEN
+# from config import BOT_TOKEN
 import logging
 from datetime import datetime
 
@@ -11,7 +11,7 @@ logging.basicConfig(
 
 dp = Dispatcher()
 
-# BOT_TOKEN = ""
+BOT_TOKEN = ""
 arr = {}
 
 
