@@ -56,6 +56,16 @@ async def start(message: Message, state: FSMContext):
     await state.set_state(Form.work)
 
 
+@dp.message(Command("stop"))
+async def stop(message: Message, state: FSMContext):
+    if await state.get_state():
+        await state.clear()
+        await message.answer("Уже уходите? Возвращайтесь, пожалуйста!")
+        del users[message.from_user.id]
+    else:
+        return
+
+
 @dp.message(Form.work)
 async def get_message(message: Message, state: FSMContext):
     text = message.text
