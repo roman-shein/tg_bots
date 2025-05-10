@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, ReplyKeyboardRemove
 
-from config import BOT_TOKEN  # импортируем токен
+# from config import BOT_TOKEN  # импортируем токен
 
 dp = Dispatcher()
 logger = logging.getLogger(__name__)
@@ -89,7 +89,7 @@ async def suphler(message: Message, state: FSMContext):
     await message.answer(f"{text_song[users[message.from_user.id]]}")
 
 
-# BOT_TOKEN = ""
+BOT_TOKEN = ""
 
 
 async def main():
