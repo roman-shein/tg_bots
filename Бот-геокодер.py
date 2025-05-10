@@ -24,7 +24,8 @@ async def main():
 
 @dp.message(CommandStart())
 async def start(message: Message):
-    await message.answer("Привет! Я бот-геокодер, введите название объекта и я покажу его на карте")
+    await message.answer("Привет! Я бот-геокодер, введите название объекта и я покажу его на карте",
+                         reply_markup=ReplyKeyboardRemove())
 
 
 @dp.message()
