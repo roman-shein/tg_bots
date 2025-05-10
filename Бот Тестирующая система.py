@@ -10,12 +10,12 @@ import json
 from random import choice
 import os
 
-from config import BOT_TOKEN  # импортируем токен
+# from config import BOT_TOKEN  # импортируем токен
 
 dp = Dispatcher()
 logger = logging.getLogger(__name__)
 
-# BOT_TOKEN = ""
+BOT_TOKEN = ""
 bot = Bot(token=BOT_TOKEN)
 
 users = {}
