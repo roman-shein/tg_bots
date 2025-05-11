@@ -10,12 +10,12 @@ import json
 from random import choice
 import os
 
-# from config import BOT_TOKEN  # импортируем токен
+from config import BOT_TOKEN  # импортируем токен
 
 dp = Dispatcher()
 logger = logging.getLogger(__name__)
 
-BOT_TOKEN = ""
+# BOT_TOKEN = ""
 bot = Bot(token=BOT_TOKEN)
 
 users = {}
@@ -29,6 +29,7 @@ async def main():
 class Form(StatesGroup):
     wait_file = State()
     testing = State()
+    start_testing = State()
 
 
 @dp.message(CommandStart())
@@ -58,7 +59,7 @@ async def get_file(message: Message, state: FSMContext):
         with open(fr"data\{user_id}.json", 'r', encoding="utf8") as fin:
             data = json.load(fin)
             users[user_id] = data["test"]
-        await state.set_state(Form.testing)
+        await state.set_state(Form.start_testing)
         questions[user_id] = choice(users[user_id])
         await message.answer("Для того чтобы начать тестирование, напишите 'поехали!'")
     except AttributeError:
@@ -70,23 +71,31 @@ async def get_file(message: Message, state: FSMContext):
 async def testing(message: Message, state: FSMContext):
     text = message.text
     user_id = message.from_user.id
-    if text != "поехали!":
-        if text == questions[user_id]["response"]:
-            await message.answer("Правильно!")
-        else:
-            await message.answer(f"Неверное. Правильный ответ: {questions[user_id]['response']}")
-        users[user_id].remove(questions[user_id])
-        if users[user_id]:
-            questions[user_id] = choice(users[user_id])
-            await message.answer(f"Следующий вопрос: {questions[user_id]['question']}")
-        else:
-            await message.answer("Вопросов больше нет!")
-            await state.clear()
-            del questions[user_id]
-            del users[user_id]
-            await message.answer("Чтобы повторить, введите /start")
+    if text == questions[user_id]["response"]:
+        await message.answer("Правильно!")
     else:
+        await message.answer(f"Неверное. Правильный ответ: {questions[user_id]['response']}")
+    users[user_id].remove(questions[user_id])
+    if users[user_id]:
+        questions[user_id] = choice(users[user_id])
+        await message.answer(f"Следующий вопрос: {questions[user_id]['question']}")
+    else:
+        await message.answer("Вопросов больше нет!")
+        await state.clear()
+        del questions[user_id]
+        del users[user_id]
+        await message.answer("Чтобы повторить, введите /start")
+
+
+@dp.message(Form.start_testing)
+async def start_testing(message: Message, state: FSMContext):
+    text = message.text
+    user_id = message.from_user.id
+    if text == "поехали!":
+        await state.set_state(Form.testing)
         await message.answer(f"{questions[user_id]['question']}")
+    else:
+        await message.answer(f"Вы написали не 'поехали!', а '{text}'")
 
 
 if __name__ == '__main__':
