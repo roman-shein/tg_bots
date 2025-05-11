@@ -44,11 +44,20 @@ async def get_ll(message: Message):
         return
     ll = ','.join(response[0]["GeoObject"]["Point"]["pos"].split() + ["pm2gnl"])
 
+    lower_corner = response[0]["GeoObject"]['boundedBy']['Envelope']['lowerCorner']
+    upper_corner = response[0]["GeoObject"]['boundedBy']['Envelope']['upperCorner']
+
+    lon1, lat1 = map(float, lower_corner.split())
+    lon2, lat2 = map(float, upper_corner.split())
+
+    spn = str(abs(lon1 - lon2)), str(abs(lat1 - lat2))
+    spn = ",".join(spn)
+
     static_api_server = "https://static-maps.yandex.ru/v1?"
     static_api_key = "318965a9-b51c-41fb-a672-2acad73bc050"
     static_api_params = {
         "apikey": static_api_key,
-        "spn": "0.05,0.05",
+        "spn": spn,
         "pt": ll
     }
     # url = requests.get(static_api_server, params=static_api_params).url
