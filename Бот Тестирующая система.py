@@ -74,7 +74,7 @@ async def testing(message: Message, state: FSMContext):
     if text == questions[user_id]["response"]:
         await message.answer("Правильно!")
     else:
-        await message.answer(f"Неверное. Правильный ответ: {questions[user_id]['response']}")
+        await message.answer(f"Неверно. Правильный ответ: {questions[user_id]['response']}")
     users[user_id].remove(questions[user_id])
     if users[user_id]:
         questions[user_id] = choice(users[user_id])
