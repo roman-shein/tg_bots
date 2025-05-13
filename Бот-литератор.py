@@ -5,9 +5,9 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message, ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 
-# from config import BOT_TOKEN  # импортируем токен
+from config import BOT_TOKEN  # импортируем токен
 
 dp = Dispatcher()
 logger = logging.getLogger(__name__)
@@ -60,10 +60,17 @@ async def start(message: Message, state: FSMContext):
 async def stop(message: Message, state: FSMContext):
     if await state.get_state():
         await state.clear()
-        await message.answer("Уже уходите? Возвращайтесь, пожалуйста!")
+        await message.answer("Уже уходите? Возвращайтесь, пожалуйста!", reply_markup=ReplyKeyboardRemove())
         del users[message.from_user.id]
     else:
         return
+
+
+@dp.message(Command("suphler"))
+async def suphler(message: Message, state: FSMContext):
+    await message.answer(f"{text_song[users[message.from_user.id]]}", reply_markup=ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="/suphler")]], one_time_keyboard=True, resize_keyboard=True
+    ))
 
 
 @dp.message(Form.work)
@@ -72,24 +79,19 @@ async def get_message(message: Message, state: FSMContext):
     key = users[message.from_user.id]
     if text == text_song[key]:
         try:
-            await message.answer(f"{text_song[key + 1]}")
+            await message.answer(f"{text_song[key + 1]}", reply_markup=ReplyKeyboardRemove())
             users[message.from_user.id] += 2
             c = text_song[users[message.from_user.id]]
         except IndexError:
             await state.clear()
             await message.answer("Ура, мы сделали это\n"
-                                 "Чтобы повторить введи /start")
+                                 "Чтобы повторить введи /start", reply_markup=ReplyKeyboardRemove())
     else:
-        await message.answer("нет, не так")
+        await message.answer("нет, не так", reply_markup=ReplyKeyboardRemove())
         await suphler(message, state)
 
 
-@dp.message(Command("suphler"))
-async def suphler(message: Message, state: FSMContext):
-    await message.answer(f"{text_song[users[message.from_user.id]]}")
-
-
-BOT_TOKEN = ""
+# BOT_TOKEN = ""
 
 
 async def main():
